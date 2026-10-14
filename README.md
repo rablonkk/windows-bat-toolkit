@@ -1,4 +1,4 @@
-# Windows BAT Toolkit: scripts .bat para corrigir internet, limpar o PC, remover Adobe e limpar drivers AMD
+# Windows BAT Toolkit: scripts .bat para correção e reparo de pc em geral.
 
 [English](README.en.md) | **Português (BR)**
 
@@ -11,10 +11,10 @@ Coleção de scripts em **Batch (.bat)** com menu interativo para **Windows 10 e
 
 - **Sem internet, DNS que não resolve, IP que não renova:** diagnóstico e reparo de rede.
 - **PC cheio de lixo temporário:** limpeza segura de Temp, cache do Windows Update e de navegadores.
-- **Adobe que não desinstala direito:** remoção do Creative Cloud e dos resíduos.
-- **Tela preta, travamentos e erros com placa de vídeo AMD:** limpeza de drivers para instalação do zero.
+- **Apps da Adobe que não desinstala direito:** remoção do Creative Cloud e dos resíduos.
+- **Tela preta, travamentos e erros de placas de vídeo AMD:** limpeza de drivers para instalação do zero.
 
-Código aberto, em texto puro, sem ofuscação. Você pode (e deve) ler antes de executar.
+Este repositório é de código aberto, você pode (e deve) ler o guia completo antes de executar qualquer batch.
 
 ## Sumário
 
@@ -155,11 +155,11 @@ Ao final, mostra o espaço liberado no drive do sistema.
 **Atenção:**
 
 - **BitLocker:** mudar o modo de boot pode exigir a chave de recuperação. Tenha-a em mãos.
-- **Notebooks:** muitos exigem o driver do **fabricante**. O driver genérico da AMD pode recusar instalar.
-- **APU Ryzen:** a iGPU também perde o driver até a reinstalação.
-- **Não toca** em chipset nem em Ryzen Master.
+- **Notebooks:** muitos exigem o driver do **fabricante**. O driver genérico da AMD pode correr o risco de não ser instalado.
+- **APU Ryzen:** a iGPU/APU ficará sem driver até a reinstalação de um novo driver.
+- Os drivers de chipsets da AMD **não são alterados e nem removidos**, somente os drivers de vídeo.
 - **Alternativa mais profunda:** o DDU (Display Driver Uninstaller) em Modo Seguro limpa mais que este script. Este projeto é uma alternativa leve, auditável e sem ferramenta de terceiros.
-- Se os travamentos continuarem depois da instalação limpa, a causa provavelmente não é driver. Verifique temperatura, fonte, overclock ou XMP instável.
+- Se os travamentos continuarem depois da instalação limpa, a causa provavelmente não é driver. Verifique temperatura, fonte, overclock ou XMP (se aplicável).
 
 ---
 
@@ -191,20 +191,20 @@ Opção 4 do `network-fix.bat`. Se `1.1.1.1` resolve e o resolvedor atual não, 
 `amd-driver-cleaner.bat`: siga o fluxo recomendado na seção do script.
 
 **Funciona no Windows 7 ou 8?**
-Não é suportado. Alvo: Windows 10 e 11.
+Não é suportado. O foco principal são versões do Windows 10 e 11.
 
 **É um substituto do DDU?**
 Não. É uma alternativa mais leve. O DDU é mais profundo.
 
 ## Compatibilidade
 
-- **Alvo:** Windows 10 e Windows 11 (64 bits), com Windows PowerShell 5.1 (já incluso).
-- **Testado em:** <!-- TODO: preencher depois de testar, ex.: Windows 11 23H2 em VM -->
-- **Idioma da interface:** PT-BR.
+- **Foco:** Windows 10 e Windows 11 (64 bits), com Windows PowerShell 5.1 (já incluso).
+- **Testado nas versões:** Windows 10 22H2, Windows 11 25H2 e 26H2 (funciona em todas as versões do Windows 10 e 11)
+- **Idioma da interface:** pt-BR (Em breve terá uma alternativa em en-US).
 
 ## Créditos, contribuição e licença
 
-- `network-fix.bat` parte de um script original de `@rablonkk`, revisado e expandido. <!-- TODO: ajuste a atribuição conforme a autoria real -->
-- Adobe, Creative Cloud, AMD, Radeon e Adrenalin são marcas de seus respectivos donos. Este projeto **não é afiliado nem endossado** por eles.
+- Scripts criados e codados por `@rablonkk`, revisado e corrigido por `@rablonkk`
+- Este projeto **não é afiliado nem endossado** por Advanced Micro Devices (AMD) e Adobe.
 - Contribuições são bem-vindas: abra uma *issue* descrevendo o problema (inclua a versão do Windows) ou um *pull request*. Mantenha os arquivos `.bat` com quebra de linha CRLF (o `.gitattributes` já cuida disso).
 - Licença: [MIT](LICENSE).
