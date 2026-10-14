@@ -33,10 +33,10 @@ Este repositório é de código aberto, você pode (e deve) ler o guia completo 
 
 | Script | Para que serve | Exige admin | Altera registro |
 |---|---|---|---|
-| [`network-fix.bat`](scripts/network-fix.bat) | Diagnosticar e corrigir internet, DNS, IP, proxy e Winsock | Só nas correções | Sim (proxy, Winsock) |
-| [`clean-temp.bat`](scripts/clean-temp.bat) | Liberar espaço limpando temporários e caches | Recomendado | Não |
-| [`adobe-remover.bat`](scripts/adobe-remover.bat) | Desinstalar produtos Adobe e remover resíduos | Sim | Sim, com backup `.reg` |
-| [`amd-driver-cleaner.bat`](scripts/amd-driver-cleaner.bat) | Remover drivers de vídeo AMD para reinstalação limpa | Sim | Sim, com backup `.reg` |
+| [`network-fix.bat`](batches/network-fix.bat) | Diagnosticar e corrigir internet, DNS, IP, proxy e Winsock | Só nas correções | Sim (proxy, Winsock) |
+| [`clean-temp.bat`](batches/clean-temp.bat) | Liberar espaço limpando temporários e caches | Recomendado | Não |
+| [`adobe-remover.bat`](batches/adobe-remover.bat) | Desinstalar produtos Adobe e remover resíduos | Sim | Sim, com backup `.reg` |
+| [`amd-driver-cleaner.bat`](batches/amd-driver-cleaner.bat) | Remover drivers de vídeo AMD para reinstalação limpa | Sim | Sim, com backup `.reg` |
 
 A interface dos menus está em **português do Brasil**.
 

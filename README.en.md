@@ -22,10 +22,10 @@ Plain text, no obfuscation. Read the code before you run it.
 
 | Script | Purpose | Needs admin | Touches registry |
 |---|---|---|---|
-| [`network-fix.bat`](scripts/network-fix.bat) | Diagnose and fix internet, DNS, IP, proxy and Winsock problems | For fixes only | Yes (proxy, Winsock) |
-| [`clean-temp.bat`](scripts/clean-temp.bat) | Free disk space by cleaning temp files and caches | Recommended | No |
-| [`adobe-remover.bat`](scripts/adobe-remover.bat) | Uninstall Adobe products and remove leftovers | Yes | Yes, with `.reg` backup |
-| [`amd-driver-cleaner.bat`](scripts/amd-driver-cleaner.bat) | Remove AMD display drivers for a clean reinstall | Yes | Yes, with `.reg` backup |
+| [`network-fix.bat`](batches/network-fix.bat) | Diagnose and fix internet, DNS, IP, proxy and Winsock problems | For fixes only | Yes (proxy, Winsock) |
+| [`clean-temp.bat`](batches/clean-temp.bat) | Free disk space by cleaning temp files and caches | Recommended | No |
+| [`adobe-remover.bat`](batches/adobe-remover.bat) | Uninstall Adobe products and remove leftovers | Yes | Yes, with `.reg` backup |
+| [`amd-driver-cleaner.bat`](batches/amd-driver-cleaner.bat) | Remove AMD display drivers for a clean reinstall | Yes | Yes, with `.reg` backup |
 
 ## Usage
 
