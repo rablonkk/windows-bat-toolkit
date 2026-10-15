@@ -50,7 +50,7 @@ echo.
 pause
 goto menu
 
-:: ---------------- UTILITARIOS ----------------
+:: UTILITARIOS
 
 :ask
 choice /c SN /m "%~1"
@@ -69,7 +69,6 @@ set "BK=%USERPROFILE%\AMD_backup_%stamp%"
 mkdir "%BK%" >nul 2>&1
 exit /b
 
-:: Remove a pasta inteira. So aceita caminhos que comecem com letra de drive + nome (bloqueia vazio e raiz).
 :rmdir
 set "p=%~1"
 if not defined p exit /b
@@ -107,7 +106,7 @@ call :rmdir "%LOCALAPPDATA%\AMD\VkCache"
 call :rmdir "%LOCALAPPDATA%\D3DSCache"
 exit /b
 
-:: ---------------- ACOES ----------------
+:: ACOES
 
 :diag
 echo.
@@ -147,7 +146,7 @@ exit /b
 
 :leve
 echo.
-call :confirm "Esse procedimento ira fechar o Radeon Software, limpar o cache dos shaders e reiniciar o adaptador de video da AMD. (A sua tela pode piscar durante esse processo). Deseja continuar? *S = SIM / N = NAO*" || exit /b
+call :confirm "Esse procedimento ira fechar o AMD Adrenalin Software, limpar o cache dos shaders e reiniciar o adaptador de video da AMD. (A sua tela pode piscar durante esse processo). Deseja continuar? *S = SIM / N = NAO*" || exit /b
 call :matar
 call :caches
 powershell -NoProfile -Command "Get-PnpDevice -Class Display -ErrorAction SilentlyContinue | Where-Object { $_.InstanceId -like 'PCI\VEN_1002*' -and $_.Status -eq 'OK' } | ForEach-Object { Write-Host ('Reiniciando adaptador: ' + $_.FriendlyName); Disable-PnpDevice -InstanceId $_.InstanceId -Confirm:$false; Start-Sleep -Seconds 3; Enable-PnpDevice -InstanceId $_.InstanceId -Confirm:$false }"
@@ -158,7 +157,7 @@ exit /b
 :software
 echo.
 echo === Desinstalacao do AMD Adrenalin Edition ===
-echo Os desinstaladores da AMD abrem as proprias janelas. Aguarde cada um terminar.
+echo Os desinstaladores da AMD abrem as suas proprias janelas. Aguarde...
 echo.
 call :matar
 powershell -NoProfile -Command "%PSK% $a=@(Get-ItemProperty $k -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match '^(AMD Software|Radeon Software|AMD Radeon|AMD Catalyst|ATI Catalyst)' -and $_.DisplayName -notmatch 'Chipset|Ryzen' -and $_.UninstallString } | Sort-Object DisplayName); if ($a.Count -eq 0) { Write-Host 'Nenhum AMD Software registrado.'; exit }; foreach ($p in $a) { $r = Read-Host ('Desinstalar ' + $p.DisplayName + ' ' + $p.DisplayVersion + '? [s/N]'); if ($r -ne 's') { continue }; $u = [string]$p.UninstallString; if ($u -match 'msiexec') { $u = ($u -replace '/I\{','/X{') + ' /passive /norestart' }; Start-Process -FilePath cmd.exe -ArgumentList ('/c ' + [char]34 + $u + [char]34) -Wait }"
@@ -177,7 +176,7 @@ exit /b
 
 :residuos
 echo.
-call :confirm "Remover servicos, tarefas, pastas, caches e chaves de registro da AMD de video. Nao toca em chipset nem Ryzen Master. Continuar" || exit /b
+call :confirm "Remover servicos, tarefas, pastas, caches e chaves de registro da AMD relacionadas a GPU. Nao afeta drivers de chipset nem Ryzen Master. Deseja continuar?" || exit /b
 call :matar
 echo --- Servicos e tarefas ---
 powershell -NoProfile -Command "Get-Service | Where-Object { $_.Name -in 'AMD External Events Utility','AMD Crash Defender Service' } | ForEach-Object { Write-Host ('Removendo servico: ' + $_.Name); Stop-Service -InputObject $_ -Force -ErrorAction SilentlyContinue; sc.exe delete $_.Name | Out-Null }"

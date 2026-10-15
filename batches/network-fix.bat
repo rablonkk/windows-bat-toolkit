@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-title Wi-Fi/Ethernet Fix (by @rablonkk) v1.1.0
+title Wi-Fi/Ethernet Fix (by @rablonkk) v1.0.0
 
 set "ISADMIN=0"
 net session >nul 2>&1 && set "ISADMIN=1"
@@ -38,8 +38,6 @@ echo.
 pause
 goto menu
 
-:: ---------------- DIAGNOSTICO ----------------
-
 :d1
 echo.
 echo --- [1] Configuracao IP ---
@@ -51,7 +49,7 @@ echo.
 echo --- [2] Gateway ---
 call :getgw
 if not defined gw (
-    echo [FALHA] Sem gateway IPv4: cabo/Wi-Fi desconectado, DHCP falhou ou adaptador desativado.
+    echo [FALHA] Sem gateway IPv4. Isso pode indicar cabo/Wi-Fi desconectado, DHCP com problemas ou adaptador desativado.
     exit /b
 )
 echo Gateway: !gw!
@@ -64,7 +62,7 @@ echo --- [3] Conectividade por IP ---
 ping -n 2 -w 2000 1.1.1.1
 ping -n 2 -w 2000 8.8.8.8
 echo.
-echo Leitura: gateway responde e 1.1.1.1/8.8.8.8 nao = problema no modem/ISP.
+echo OBS: Se o gateway responde e o 1.1.1.1/8.8.8.8 nao. Isso Pode inficar problema no modem/ISP.
 exit /b
 
 :d4
@@ -75,7 +73,7 @@ echo.
 echo --- [4] DNS (resolvedor externo 1.1.1.1) ---
 nslookup google.com 1.1.1.1
 echo.
-echo Leitura: externo resolve e atual nao = DNS do roteador/ISP com defeito (troque o DNS).
+echo OBS: Se o DNS externo responde e o atual nao. Isso pode indicar que o DNS do roteador/ISP possa estar com defeito (troque o DNS).
 exit /b
 
 :d5
@@ -104,8 +102,6 @@ for /f "tokens=3" %%g in ('route print -4 ^| findstr /r /c:"^ *0\.0\.0\.0 *0\.0\
     echo %%g| findstr /r "^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$" >nul && if not defined gw set "gw=%%g"
 )
 exit /b
-
-:: ---------------- CORRECAO ----------------
 
 :req
 if "%ISADMIN%"=="1" exit /b 0

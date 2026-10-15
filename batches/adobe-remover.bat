@@ -46,8 +46,6 @@ echo.
 pause
 goto menu
 
-:: ---------------- UTILITARIOS ----------------
-
 :ask
 choice /c SN /m "%~1"
 if errorlevel 2 exit /b 1
@@ -70,7 +68,6 @@ set "BK=%USERPROFILE%\Adobe_backup_%stamp%"
 mkdir "%BK%" >nul 2>&1
 exit /b
 
-:: Remove a pasta inteira. Recusa caminhos que nao terminem em \Adobe ou sejam curtos demais.
 :rmdir
 set "p=%~1"
 if not defined p exit /b
@@ -98,8 +95,6 @@ reg query "%~1" >nul 2>&1 || exit /b
 reg export "%~1" "%BK%\%~2.reg" /y >nul 2>&1 || (echo   [!] Backup falhou, chave preservada: %~1 & exit /b)
 reg delete "%~1" /f >nul 2>&1 && echo   Removida: %~1
 exit /b
-
-:: ---------------- ACOES ----------------
 
 :inventario
 echo.
@@ -129,12 +124,12 @@ echo.
 echo === Chaves de registro ===
 for %%r in ("HKCU\Software\Adobe" "HKLM\SOFTWARE\Adobe" "HKLM\SOFTWARE\WOW6432Node\Adobe") do reg query %%r >nul 2>&1 && echo   %%~r
 echo.
-echo Nao tocados por este script: Creative Cloud Files, Documentos\Adobe, Imagens ^(catalogos Lightroom^), arquivo hosts.
+echo Arquivos nao acessados por este batch: Creative Cloud Files, Documentos\Adobe, Imagens ^(catalogos Lightroom^), arquivo hosts.
 exit /b
 
 :encerrar
 echo.
-call :confirm "Encerrar processos e servicos Adobe. Apps abertos perdem trabalho nao salvo. Continuar" || exit /b
+call :confirm "Encerra processos e servicos Adobe. Os apps da Adobe abertos, podem perder o trabalho atual nao salvo. Deseja continuar?" || exit /b
 powershell -NoProfile -Command "Get-Service | Where-Object { $_.Name -like 'Adobe*' -or $_.DisplayName -like 'Adobe*' -or $_.Name -in 'AGMService','AGSService' } | ForEach-Object { Write-Host ('Parando servico: ' + $_.Name); Stop-Service -InputObject $_ -Force -ErrorAction SilentlyContinue }"
 powershell -NoProfile -Command "Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -like 'Adobe*' -or $_.Path -like '*\Adobe\*' -or $_.ProcessName -in 'armsvc','CCXProcess','CCLibrary','Creative Cloud' } | ForEach-Object { Write-Host ('Encerrando: ' + $_.ProcessName); Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue }"
 exit /b
@@ -142,7 +137,7 @@ exit /b
 :desinstalar
 echo.
 echo === Desinstalacao ===
-echo Apps primeiro, Creative Cloud por ultimo. Cada desinstalador abre a propria janela: aguarde terminar.
+echo Apps primeiro, Creative Cloud por ultimo. Cada desinstalador abre a propria janela. Aguarde...
 echo Dica: saia da conta no Creative Cloud antes, para liberar a ativacao.
 echo.
 powershell -NoProfile -Command "%PSK% $a=@(Get-ItemProperty $k -ErrorAction SilentlyContinue | Where-Object { ($_.Publisher -like 'Adobe*' -or $_.DisplayName -like 'Adobe*') -and $_.UninstallString } | Sort-Object @{e={$_.DisplayName -like '*Creative Cloud*'}}, DisplayName); if ($a.Count -eq 0) { Write-Host 'Nenhum produto Adobe com desinstalador registrado.'; exit }; foreach ($p in $a) { $r = Read-Host ('Desinstalar ' + $p.DisplayName + ' ' + $p.DisplayVersion + '? [s/N]'); if ($r -ne 's') { continue }; $u = [string]$p.UninstallString; if ($u -match 'msiexec') { $u = ($u -replace '/I\{','/X{') + ' /passive /norestart' }; Start-Process -FilePath cmd.exe -ArgumentList ('/c ' + [char]34 + $u + [char]34) -Wait }"
@@ -159,8 +154,8 @@ exit /b
 :sistema
 echo.
 call :countprod
-if not "%prod%"=="0" call :ask "Ainda ha %prod% entradas Adobe instaladas. Apagar as pastas as deixa orfas. Continuar mesmo assim" || exit /b
-call :confirm "Apagar as pastas Adobe de Program Files, Common Files e ProgramData. Isso inclui Acrobat Reader e plug-ins de terceiros dentro delas. Continuar" || exit /b
+if not "%prod%"=="0" call :ask "Ainda ha %prod% entradas Adobe instaladas. Apagar as pastas podem deixar arquivos orfãos e corrompidos. Deseja continuar mesmo assim?" || exit /b
+call :confirm "Apagar pastas da Adobe, como Program Files, Common Files e ProgramData. Isso inclui Acrobat Reader e plug-ins de terceiros presentes nela. Deseja continuar?" || exit /b
 call :rmdir "%ProgramFiles%\Adobe"
 call :rmdir "%pf86%\Adobe"
 call :rmdir "%ProgramFiles%\Common Files\Adobe"
@@ -170,7 +165,7 @@ exit /b
 
 :usuario
 echo.
-call :confirm "ATENCAO: apaga preferencias, workspaces, presets, pinceis e cache de midia do usuario atual em AppData. Irreversivel. Continuar" || exit /b
+call :confirm "ATENCAO: apaga preferencias, workspaces, presets, pinceis e cache de midia do usuario atual no AppData. Essa acao e Irreversivel. Deseja continuar?" || exit /b
 call :rmdir "%APPDATA%\Adobe"
 call :rmdir "%LOCALAPPDATA%\Adobe"
 exit /b
@@ -178,8 +173,8 @@ exit /b
 :registro
 echo.
 call :countprod
-if not "%prod%"=="0" call :ask "Ainda ha %prod% entradas Adobe instaladas. Remover as chaves pode quebra-las. Continuar mesmo assim" || exit /b
-call :confirm "Remover as chaves Software\Adobe do registro, com backup em .reg. Continuar" || exit /b
+if not "%prod%"=="0" call :ask "Ainda ha %prod% entradas Adobe instaladas. Remover as chaves pode quebra-las. Deseja continuar mesmo assim?" || exit /b
+call :confirm "Remover as chaves Software\Adobe do registro, com backup em .reg. Deseja continuar?" || exit /b
 call :mkbackup
 call :regdel "HKCU\Software\Adobe" HKCU_Adobe
 call :regdel "HKLM\SOFTWARE\Adobe" HKLM_Adobe

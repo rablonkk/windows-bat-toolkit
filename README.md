@@ -13,6 +13,7 @@ Coleção de scripts em **Batch (.bat)** com menu interativo para **Windows 10 e
 - **PC cheio de lixo temporário:** limpeza segura de Temp, cache do Windows Update e de navegadores.
 - **Apps da Adobe que não desinstala direito:** remoção do Creative Cloud e dos resíduos.
 - **Tela preta, travamentos e erros de placas de vídeo AMD:** limpeza de drivers para instalação do zero.
+- **OneDrive que não faz login ou não sincroniza:** diagnóstico, correção de login e reset sem apagar seus arquivos.
 
 Este repositório é de código aberto, você pode (e deve) ler o guia completo antes de executar qualquer batch.
 
@@ -24,6 +25,7 @@ Este repositório é de código aberto, você pode (e deve) ler o guia completo 
 - [clean-temp.bat: limpar arquivos temporários](#clean-tempbat-limpar-arquivos-temporários)
 - [adobe-remover.bat: desinstalar a Adobe por completo](#adobe-removerbat-desinstalar-a-adobe-por-completo)
 - [amd-driver-cleaner.bat: limpar drivers de vídeo AMD](#amd-driver-cleanerbat-limpar-drivers-de-vídeo-amd)
+- [onedrive-fix.bat: corrigir OneDrive que não faz login ou não sincroniza](#onedrive-fixbat-corrigir-onedrive-que-não-faz-login-ou-não-sincroniza)
 - [Segurança e transparência](#segurança-e-transparência)
 - [Perguntas frequentes](#perguntas-frequentes)
 - [Compatibilidade](#compatibilidade)
@@ -37,6 +39,7 @@ Este repositório é de código aberto, você pode (e deve) ler o guia completo 
 | [`clean-temp.bat`](batches/clean-temp.bat) | Liberar espaço limpando temporários e caches | Recomendado | Não |
 | [`adobe-remover.bat`](batches/adobe-remover.bat) | Desinstalar produtos Adobe e remover resíduos | Sim | Sim, com backup `.reg` |
 | [`amd-driver-cleaner.bat`](batches/amd-driver-cleaner.bat) | Remover drivers de vídeo AMD para reinstalação limpa | Sim | Sim, com backup `.reg` |
+| [`onedrive-fix.bat`](batches/onedrive-fix.bat) | Corrigir login, sincronização e reinstalar o OneDrive | **Não** (pede elevação só nas etapas que precisam) | Sim, com backup `.reg` |
 
 A interface dos menus está em **português do Brasil**.
 
@@ -46,6 +49,8 @@ A interface dos menus está em **português do Brasil**.
 2. **Leia o script** que vai executar. Ele é texto puro, abra no Bloco de Notas.
 3. Clique com o botão direito no `.bat` e escolha **Executar como administrador**.
 4. Escolha uma opção no menu. Ações que apagam ou alteram algo pedem confirmação.
+
+> **Exceção:** o `onedrive-fix.bat` deve ser executado **sem** administrador (clique duplo normal). Veja a seção do script.
 
 Se o Windows exibir "O Windows protegeu o computador" (SmartScreen), é o aviso padrão para qualquer script baixado da internet. Só prossiga em **Mais informações > Executar assim mesmo** se você leu o código e confia nele.
 
@@ -163,10 +168,36 @@ Ao final, mostra o espaço liberado no drive do sistema.
 
 ---
 
+## onedrive-fix.bat: corrigir OneDrive que não faz login ou não sincroniza
+
+**Quando usar:** não consegue entrar na conta, fica em laço de login, o OneDrive não abre, a sincronização trava, ou ele foi bloqueado por política. O código `0x8004de40` costuma indicar falha de conexão com o serviço, e o diagnóstico ajuda a separar a causa.
+
+| Opção | O que faz |
+|---|---|
+| 1 | Diagnóstico (não altera nada): instalação e versão, processo, contas vinculadas, pastas redirecionadas, políticas de bloqueio, hora e fuso, serviços de login da conta Microsoft, proxy, conectividade com os servidores de login (porta 443), espaço em disco e credenciais em cache |
+| 2 | Reinicia o OneDrive |
+| 3 | Corrige login: ressincroniza a hora, garante os serviços de conta Microsoft (`wlidsvc`, `TokenBroker`) e remove as credenciais em cache |
+| 4 | Reset oficial (`onedrive.exe /reset`) |
+| 5 | Reset profundo: credenciais, renomeia a pasta `settings` (vira backup) e faz o reset oficial |
+| 6 | Remove a política `DisableFileSync` que bloqueia o OneDrive, com backup `.reg` |
+| 7 | Desinstala o aplicativo (não apaga seus arquivos) |
+| 8 | Instala ou reinstala usando o instalador que já vem no Windows |
+
+**Atenção:**
+
+- **Execute SEM administrador**, na sua conta. As configurações e credenciais do OneDrive são por usuário. As etapas que precisam de admin (hora, serviços, política do sistema) pedem elevação sozinhas.
+- O script **não apaga nem mexe nos arquivos da pasta OneDrive**. Os resets desconectam as contas e podem causar uma ressincronização longa.
+- Se **Desktop, Documentos ou Imagens** estão redirecionados para o OneDrive, desinstalar sem desfazer isso pode deixar essas pastas vazias ou fora do lugar. O script detecta e avisa.
+- Em PC de **empresa ou escola**, políticas e configurações são do administrador de TI e podem voltar sozinhas.
+- A opção 3 usa `w32tm /resync`, que consulta um servidor de hora na internet.
+- O diagnóstico mostra seu e-mail e caminhos. Oculte antes de compartilhar a saída.
+
+---
+
 ## Segurança e transparência
 
 - Todos os scripts são **texto puro** e sem ofuscação.
-- **Nenhum script baixa arquivos nem envia dados.** O único acesso à rede é do `network-fix.bat`, que faz `ping` e `nslookup` para os testes.
+- **Nenhum script baixa arquivos nem envia dados.** Os únicos acessos à rede são testes: `ping` e `nslookup` no `network-fix.bat`, e no `onedrive-fix.bat` testes de conexão na porta 443 a servidores da Microsoft e `w32tm /resync` (hora).
 - Os scripts usam PowerShell, que já vem no Windows, e pedem elevação de administrador via `Start-Process -Verb RunAs`.
 - Toda ação destrutiva pede confirmação, e as que alteram o registro fazem backup `.reg` antes.
 - Podem ser sinalizados por antivírus como "suspeitos", por mexerem em serviços, drivers e registro. É falso positivo comum para `.bat`. A solução é ler o código, não desativar o antivírus.
@@ -190,6 +221,9 @@ Opção 4 do `network-fix.bat`. Se `1.1.1.1` resolve e o resolvedor atual não, 
 **Como reinstalar o driver AMD do zero?**
 `amd-driver-cleaner.bat`: siga o fluxo recomendado na seção do script.
 
+**O OneDrive não deixa eu entrar na conta. Qual script?**
+`onedrive-fix.bat`: opção 1 (diagnóstico), depois 3 (corrigir login). Se persistir, opção 5 (reset profundo).
+
 **Funciona no Windows 7 ou 8?**
 Não é suportado. O foco principal são versões do Windows 10 e 11.
 
@@ -205,6 +239,6 @@ Não. É uma alternativa mais leve. O DDU é mais profundo.
 ## Créditos, contribuição e licença
 
 - Scripts criados e codados por `@rablonkk`, revisado e corrigido por `@rablonkk`
-- Este projeto **não é afiliado nem endossado** por Advanced Micro Devices (AMD) e Adobe.
+- Este projeto **não é afiliado nem endossado** por Advanced Micro Devices (AMD), Adobe e Microsoft.
 - Contribuições são bem-vindas: abra uma *issue* descrevendo o problema (inclua a versão do Windows) ou um *pull request*. Mantenha os arquivos `.bat` com quebra de linha CRLF (o `.gitattributes` já cuida disso).
 - Licença: [MIT](LICENSE).

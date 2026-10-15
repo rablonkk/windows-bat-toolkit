@@ -55,8 +55,6 @@ echo.
 pause
 goto menu
 
-:: ---------------- UTILITARIOS ----------------
-
 :getfree
 for /f %%a in ('powershell -NoProfile -Command "(Get-PSDrive %SystemDrive:~0,1%).Free"') do set "%~1=%%a"
 exit /b
@@ -75,7 +73,6 @@ if "%ISADMIN%"=="1" exit /b 0
 echo [!] Pulado: requer administrador.
 exit /b 1
 
-:: Apaga o CONTEUDO da pasta, nunca a pasta em si. Recusa caminhos curtos demais (ex.: raiz do drive).
 :clean
 set "p=%~1"
 if not defined p exit /b
@@ -85,8 +82,6 @@ if not defined t echo [!] Caminho curto demais, ignorado: %p% & exit /b
 del /f /s /q "%p%\*" >nul 2>&1
 for /d %%d in ("%p%\*") do rd /s /q "%%d" >nul 2>&1
 exit /b
-
-:: ---------------- LIMPEZAS ----------------
 
 :uTemp
 echo.
