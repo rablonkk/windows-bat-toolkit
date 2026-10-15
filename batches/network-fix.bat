@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
-title Wi-Fi/Ethernet Fix (by @rablonkk) v1.0.0
+title Wi-Fi/Ethernet Fix (by @rablonkk) v1.1.0
 
 set "ISADMIN=0"
 net session >nul 2>&1 && set "ISADMIN=1"

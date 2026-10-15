@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
-title Reparo e Limpeza de Drivers de Video AMD (by @rablonkk) v1.0.0
+title Reparo e Limpeza de Drivers de Video AMD (by @rablonkk) v1.1.0
 
 set "ISADMIN=0"
 net session >nul 2>&1 && set "ISADMIN=1"
